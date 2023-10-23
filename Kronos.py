@@ -69,7 +69,7 @@ def ab4(u_0,T,delta_t):
     return np.array(u),times
 
 # T, dt = 300 * 365 * 24 * 3600, 60*60*24*100
-T, dt = 24*60*60*365*10, 60*60 
+T, dt = 24*60*60*365*10, 60*60
 mSaturn = 568.32e24 # kg
 mTitan = 1.345e23 # kg
 rTitan = 1.22e9 # m
@@ -91,7 +91,7 @@ r0[3] = [rHyperion, 0.0, 0.0]
 r0[4] = [rIapetus, 0.0, 0.0]
 # r0[5] = [rFenrir, 0.0, 0.0]
 
-rDeathStar = np.max(r0)*2
+rDeathStar = np.max(r0)*1.2
 r0[2] = [rDeathStar*np.sin(np.pi/4), rDeathStar*np.cos(np.pi/4), 0.0]
 
 # print(r0)
@@ -139,17 +139,17 @@ print(sol_time)
 sol_r = np.array(sol_r)
 sol = np.vstack((sol_r, np.zeros(sol_r.shape)))
 print(sol)
-ax.plot(r1[:,0], r1[:,1], r1[:,2], color="yellow", label="Saturn")
-ax.plot(r2[:,0], r2[:,1], r2[:,2], color="blue", label="Titan")
-ax.plot(r3[:,0], r3[:,1], r3[:,2], color="black", label="Death Star")
-ax.plot(r4[:,0], r4[:,1], r4[:,2], color="cyan", label="Hyperion")
-ax.plot(r5[:,0], r5[:,1], r5[:,2], color="pink", label="Iapetus")
-# ax.plot(r6[:,0], r6[:,1], r6[:,2], color="orange", label="Fenrir")
-# ax.plot(sol[:,0], sol[:,1], sol[:,2], color="r", label="Solution")
+ax.scatter(r1[:,0], r1[:,1], r1[:,2], color="goldenrod", s=20, label="Saturn")
+ax.scatter(r2[:,0], r2[:,1], r2[:,2], color="blue", s=1, label="Titan")
+ax.scatter(r3[:,0], r3[:,1], r3[:,2], color="dimgray", s=20, label="Death Star")
+ax.scatter(r4[:,0], r4[:,1], r4[:,2], color="cyan", s=1, label="Hyperion")
+ax.scatter(r5[:,0], r5[:,1], r5[:,2], color="pink", s=1, label="Iapetus")
+# ax.scatter(r6[:,0], r6[:,1], r6[:,2], color="orange", s=1, label="Fenrir")
+ax.plot(sol[:,0], sol[:,1], sol[:,2], color="lime", label="Super Laser")
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
-fig.suptitle("N Body Dynamics")
+fig.suptitle("Project Kronos")
 # plt.xlim(-1.22e12,1.22e9)
 # plt.ylim(0, 1.22e9)
 plt.legend()
