@@ -153,4 +153,75 @@ fig.suptitle("Project Kronos")
 # plt.xlim(-1.22e12,1.22e9)
 # plt.ylim(0, 1.22e9)
 plt.legend()
+# plt.show()
+
+def R(z):
+    return 1 + z + (z**2)/2 + (z**3)/6 + (z**4)/24
+
+x = np.linspace(-4, 4, 400)
+y = np.linspace(-4, 4, 400)
+X, Y = np.meshgrid(x, y)
+    
+axisbox = [-1.5, 1.5, -1, 1]
+xa, xb, ya, yb = axisbox
+npts = 50
+theta = np.linspace(0, 2 * np.pi, 2 * npts + 1)
+z = np.exp(1j * theta)
+Z = X + 1j*Y
+W = R(Z)
+
+nu2 = (z**2 - z) / ((3 * z - 1) / 2)
+
+nu3 = (z**3 - z**2) / ((5 - 16 * z + 23 * z**2) / 12)
+
+nu4 = (z**4 - z**3) / ((55 * z**3 - 59 * z**2 + 37 * z - 9) / 24)
+
+# nu5 = 1 + z + (z**2)/2 + (z**3)/6 + (z**4)/24
+
+nu4_list = list(nu4)
+for k in range(len(nu4_list) - 1):
+    z_ = np.array([np.real(nu4_list), np.imag(nu4_list)])
+    iloop = []
+    for j in range(k + 2, len(nu4_list) - 1):
+        lam = np.linalg.inv(np.column_stack((z_[:, k] - z_[:, k + 1], z_[:, j + 1] - z_[:, j]))) @ (z_[:, j + 1] - z_[:, k + 1])
+        if np.all(lam >= 0) and np.all(lam <= 1):
+            iloop = list(range(k + 1, j + 1))
+            zint = lam[0] * z_[:, k] + (1 - lam[0]) * z_[:, k + 1]
+            break
+    if iloop:
+        zcp = complex(zint[0], zint[1])
+        nu4_list[iloop[0]] = zcp
+        for index in reversed(iloop[1:]):
+            del nu4_list[index]
+
+nu4 = np.array(nu4_list)
+
+plt.figure(figsize=(8, 6))
+plt.plot(np.real(nu2), np.imag(nu2), 'g-', linewidth=2)
+plt.fill_between(np.real(nu2), np.imag(nu2), color='green', label = 'AB2')
+plt.plot(np.real(nu3), np.imag(nu3), 'b-', linewidth=2)
+plt.fill_between(np.real(nu3), np.imag(nu3), color='blue', label = 'AB3')
+plt.plot(np.real(nu4), np.imag(nu4), 'r-', linewidth=2)
+plt.fill_between(np.real(nu4), np.imag(nu4), color='red', label = 'AB4')
+C = plt.contourf(X, Y, np.abs(W), levels=[0, 1], colors=['yellow', 'yellow'],alpha = 0.3)
+plt.contour(X, Y, np.abs(W), levels=[1], colors='yellow')
+
+handles_fill, labels_fill = plt.gca().get_legend_handles_labels()
+
+handle_RK4 = [plt.Line2D([0], [0], color='yellow', lw=4)]
+label_RK4 = ['RK4']
+handles_all = handles_fill + handle_RK4
+labels_all = labels_fill + label_RK4
+
+plt.legend(handles_all, labels_all, loc='upper left')
+
+plt.plot([xa, xb], [0, 0], 'k-', linewidth=2)
+plt.plot([0, 0], [ya, yb], 'k-', linewidth=2)
+plt.title('Region of absolute stability')
+plt.xlabel('Re(hλ)')
+plt.ylabel('Im(hλ)')
+plt.xlim(-4,0.5)
+plt.ylim(-3,3)
+plt.grid(True)
 plt.show()
+
